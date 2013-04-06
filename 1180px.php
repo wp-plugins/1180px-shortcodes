@@ -3,7 +3,7 @@
 Plugin Name: 1180px Shortcodes
 Plugin URI: http://1180px.com
 Description: Adds simple shortcodes for the 1180px css framework
-Version: 0.8
+Version: 1.0
 Author: Chris Blackwell
 Author URI: http://chrisblackwell.me
 */
