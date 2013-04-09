@@ -3,7 +3,7 @@ Contributors: Chris Blackwell
 Tags: 1180px, css, shortcodes
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.0.1
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,6 +58,7 @@ fallback to floats.
 
 April 8th, 2013
   - Fixed wordpress register stylesheet problem
+  - Fixed a bug about closing the shortcode, even though I was pretty sure I fixed it already...grrr...
 
 April 5th, 2013
   - Changed 1180px css file to 1.0
