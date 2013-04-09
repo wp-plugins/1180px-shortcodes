@@ -3,7 +3,7 @@
 Plugin Name: 1180px Shortcodes
 Plugin URI: http://1180px.com
 Description: Adds simple shortcodes for the 1180px css framework
-Version: 1.0.1
+Version: 1.0.2
 Author: Chris Blackwell
 Author URI: http://chrisblackwell.me
 */
@@ -42,18 +42,6 @@ function row_shortcode( $atts ) {
     return '<div class="row">';
 }
 add_shortcode( 'row', 'row_shortcode' );
-
-// [/row]
-function row_close_shortcode( $atts ) {
-    return '</div><!-- close row -->';
-}
-add_shortcode( '/row', 'row_close_shortcode' );
-
-// [/span]
-function span_close_shortcode( $atts ) {
-    return '</div><!-- close span -->';
-}
-add_shortcode( '/row', 'span_close_shortcode' );
 
 // [span1]
 function span1_shortcode( $atts ) {
@@ -126,4 +114,3 @@ function span12_shortcode( $atts ) {
     return '<div class="span12">';
 }
 add_shortcode( 'span12', 'span12_shortcode' );
-
