@@ -3,18 +3,13 @@ Contributors: Chris Blackwell
 Tags: 1180px, css, shortcodes
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 1180px shortcodes gives you simple shortcodes to use the 1180px css grid system.
 
-== Installation ==
-
-1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-
-== Shortcode Usage ==
+== Description ==
 
 The 1180 grid system is a 12-column grid, so all column spans must add up to 12.
 
@@ -53,12 +48,20 @@ fallback to floats.
 
     [row class="flexbox someOtherClass anotherClass"]
 
+== Installation ==
+
+1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
+2. Activate the plugin through the 'Plugins' menu in WordPress
+
 
 == Changelog ==
 
-* April 5th, 2013
+April 8th, 2013
+  - Fixed wordpress register stylesheet problem
+
+April 5th, 2013
   - Changed 1180px css file to 1.0
 
-* April 4th, 2013
+April 4th, 2013
   - Added basic shortcode support
   - Included most recent version of compressed 1180px css
