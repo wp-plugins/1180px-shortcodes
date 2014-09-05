@@ -32,7 +32,7 @@ Author URI: http://chrisblackwell.me
 
 // Register the 1180px css file
 function register_1180_css_file() {
-    wp_register_style( '1180px', plugins_url( '/css/1180px.min.css', __FILE__ ), array(), '1.0', 'all' );
+    wp_register_style( '1180px', plugins_url( '/css/1180px.css', __FILE__ ), array(), '1.0', 'all' );
     wp_enqueue_style( '1180px' );
 }
 add_action( 'wp_enqueue_scripts', 'register_1180_css_file' );
