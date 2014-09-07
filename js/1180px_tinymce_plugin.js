@@ -37,9 +37,9 @@
         if( selected ){
           //If text is selected when button is clicked
           //Wrap shortcode around it.
-          content =  '[span cols="' + number + '"]' + selected + '[/span]';
+          content =  '[span col="' + number + '"]' + selected + '[/span]';
         } else {
-          content =  '[span cols="' + number + '"][/span]';
+          content =  '[span col="' + number + '"][/span]';
         }
 
         tinymce.execCommand('mceInsertContent', false, content);

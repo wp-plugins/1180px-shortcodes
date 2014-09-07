@@ -3,7 +3,7 @@
 Plugin Name: 1180px Shortcodes
 Plugin URI: http://1180px.com
 Description: Adds simple shortcodes for the 1180px css framework
-Version: 1.1.0
+Version: 1.1.1
 Author: Chris Blackwell
 Author URI: http://chrisblackwell.me
 */
@@ -131,7 +131,7 @@ class ElevenEightyShortcodes {
 
     $content = $this->sanitizeContent($content);
 
-    return '<div class="span' . $atts['cols'] . '">' . $content . '</div>';
+    return '<div class="span' . $atts['col'] . '">' . $content . '</div>';
   }
 
   /**

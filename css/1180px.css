@@ -1,10 +1,10 @@
 /**********************************************
 * 1180px CSS Grid System - 1180px.com
-* Version: 1.1
+* Version: 1.1.1
 * by Chris Blackwell / chrisblackwell.me
 **********************************************/
 
-.wrap {
+.page-container {
     width: 1180px;
     margin: 0 auto;
 }
@@ -86,7 +86,7 @@
 * Smaller Screens
 **********************************/
 @media only screen and (max-width : 1200px) {
-    .wrap {
+    .page-container {
         width: 960px;
     }
 }
@@ -95,7 +95,7 @@
 * Tablets
 **********************************/
 @media only screen and (max-width : 990px) {
-    .wrap {
+    .page-container {
         width: 738px;
     }
 }
@@ -106,7 +106,7 @@
 **********************************/
 /* Extra Small Devices, Phones */
 @media only screen and (max-width : 767px) {
-    .wrap {
+    .page-container {
         width: 96%;
     }
     .row {
