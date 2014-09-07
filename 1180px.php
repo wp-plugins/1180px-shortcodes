@@ -3,13 +3,13 @@
 Plugin Name: 1180px Shortcodes
 Plugin URI: http://1180px.com
 Description: Adds simple shortcodes for the 1180px css framework
-Version: 1.0.3
+Version: 1.1.1
 Author: Chris Blackwell
 Author URI: http://chrisblackwell.me
 */
 
 /**
- * Copyright (c) 2013 Chris Blackwell. All rights reserved.
+ * Copyright (c) 2014 Chris Blackwell. All rights reserved.
  *
  * Released under the GPL license
  * http://www.opensource.org/licenses/gpl-license.php
@@ -30,26 +30,166 @@ Author URI: http://chrisblackwell.me
  * **********************************************************************
  */
 
-// Register the 1180px css file
-function register_1180_css_file() {
-    wp_register_style( '1180px', plugins_url( '/css/1180px.min.css', __FILE__ ), array(), '1.0', 'all' );
-    wp_enqueue_style( '1180px' );
-}
-add_action( 'wp_enqueue_scripts', 'register_1180_css_file' );
+class ElevenEightyShortcodes {
 
-// [row]
-function row_shortcode( $atts, $content = null ) {
+  /**
+   * The version number of 1180px
+   * @var string
+   */
+  private $version;
 
+  /**
+   * The instance of the class, set to null by default
+   * @var null
+   */
+  private static $instance = null;
+
+  /**
+   * Initialize the plugin and active the _setup() function
+   */
+  public static function init() {
+    add_action('plugins_loaded', array(self::get_instance(), '_setup') );
+  }
+
+  /**
+   * Create an instance of the ElevenEightyShortcodes class
+   * and set it to the $instance variable
+   *
+   * @return ElevenEightyShortcodes|null
+   */
+  public static function get_instance() {
+    if( is_null(self::$instance) ) {
+      self::$instance = new self;
+    }
+    return self::$instance;
+  }
+
+  /**
+   * Set version number of plugin and activate actions and hooks
+   */
+  public function _setup() {
+    $this->version = '1.1.0';
+    $this->register_styles_and_scripts();
+    $this->add_new_shortcode( 'row', 'row_shortcode_callback' );
+    $this->add_new_shortcode( 'span', 'span_shortcode_callback' );
+
+    add_action('init', array(self::$instance, 'wp1180px_shortcode_button_init'));
+  }
+
+  /**
+   * Register CSS and JavaScript files
+   */
+  private function register_styles_and_scripts() {
+    add_action( 'wp_enqueue_scripts', array(self::$instance, 'register_1180_css_file') );
+  }
+
+  /**
+   * Registers the 1180px css file
+   */
+  public function register_1180_css_file() {
+    wp_enqueue_style( '1180px', plugins_url( '/css/1180px.css', __FILE__ ), array(), $this->get_version(), 'all' );
+  }
+
+  /**
+   * Registers the shortcode with @WordPress
+   */
+  private function add_new_shortcode($shortcode, $callback) {
+    add_shortcode( $shortcode, array(self::$instance, $callback) );
+  }
+
+  /**
+   * Callback function to specify the output
+   * of the [row] shortcode
+   *
+   * @param array $atts
+   * @param array $content
+   *
+   * @return string
+   */
+  public function row_shortcode_callback( $atts, $content = null ) {
+
+    $content = $this->sanitizeContent($content);
+
+    if(isset($atts['class']))
+    {
+      return '<div class="row ' . $atts['class'] . '">' . $content . '</div>';
+    }
+    return '<div class="row">' . $content . '</div>';
+
+  }
+
+  /**
+   * Callback function for the registered span shortcodes
+   *
+   * @param array   $atts
+   * @param null    $content
+   * @param string  $tag
+   *
+   * @return string
+   */
+  public function span_shortcode_callback($atts, $content = null) {
+
+    $content = $this->sanitizeContent($content);
+
+    return '<div class="span' . $atts['col'] . '">' . $content . '</div>';
+  }
+
+  /**
+   * Create a new button on the WYSIWYG editor
+   * for the row and span shortcodes
+   */
+  public function wp1180px_shortcode_button_init() {
+    // Abort early if the user will never see TinyMCE
+    if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') && get_user_option('rich_editing') == 'true')
+      return;
+
+    //Add a callback to regiser our tinymce plugin
+    add_filter('mce_external_plugins', array(self::$instance, 'wp1180px_register_tinymce_plugin') );
+
+    // Add a callback to add our button to the TinyMCE toolbar
+    add_filter('mce_buttons', array(self::$instance, 'wp1180p_add_tinymce_button') );
+  }
+
+  /**
+   * Register a new tinymce plugin
+   *
+   * @param array $plugin_array
+   * @return array
+   */
+  public function wp1180px_register_tinymce_plugin($plugin_array) {
+    $plugin_array['wp1180px_buttons'] = plugin_dir_url(__FILE__) . '/js/1180px_tinymce_plugin.js';
+    return $plugin_array;
+  }
+
+  /**
+   * Add new tinymce buttons to the editor
+   *
+   * @param array $buttons
+   * @return array
+   */
+  public function wp1180p_add_tinymce_button($buttons) {
+    array_push( $buttons, 'wp1180px_row', 'wp1180px_span' );
+    return $buttons;
+  }
+
+  /**
+   * Remove excess whitespace from shortcode content
+   * and return the $content
+   *
+   * @param  mixed|string $content
+   * @return mixed|string $content
+   */
+  public function sanitizeContent($content) {
     /* Parse nested shortcodes and add formatting. */
     $content = trim( do_shortcode( shortcode_unautop( $content ) ) );
 
     /* Remove '' from the start of the string. */
     if ( substr( $content, 0, 4 ) == '' )
-        $content = substr( $content, 4 );
+      $content = substr( $content, 4 );
 
     /* Remove '' from the end of the string. */
     if ( substr( $content, -3, 3 ) == '' )
-        $content = substr( $content, 0, -3 );
+      $content = substr( $content, 0, -3 );
 
     /* Remove any instances of ''. */
     $content = str_replace( array( '<p></p>' ), '', $content );
@@ -59,83 +199,17 @@ function row_shortcode( $atts, $content = null ) {
     add_filter( 'the_content', 'wpautop' , 99);
     add_filter( 'the_content', 'shortcode_unautop',100 );
 
-    if(isset($atts['class']))
-    {
-        return '<div class="row ' . $atts['class'] . '">' . $content . '</div>';
-    }
-    return '<div class="row">' . $content . '</div>';
+    return $content;
+  }
 
+  /**
+   * Get the version number for the plugin
+   *
+   * @return string
+   */
+  public function get_version() {
+    return $this->version;
+  }
 }
-add_shortcode( 'row', 'row_shortcode' );
 
-// [span1]
-function span1_shortcode( $atts, $content = null ) {
-    return '<div class="span1">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span1', 'span1_shortcode' );
-
-// [span2]
-function span2_shortcode( $atts, $content = null ) {
-    return '<div class="span2">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span2', 'span2_shortcode' );
-
-// [span3]
-function span3_shortcode( $atts, $content = null ) {
-    return '<div class="span3">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span3', 'span3_shortcode' );
-
-// [span4]
-function span4_shortcode( $atts, $content = null ) {
-    return '<div class="span4">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span4', 'span4_shortcode' );
-
-// [span5]
-function span5_shortcode( $atts, $content = null ) {
-    return '<div class="span5">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span5', 'span5_shortcode' );
-
-// [span6]
-function span6_shortcode( $atts, $content = null ) {
-    return '<div class="span6">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span6', 'span6_shortcode' );
-
-// [span7]
-function span7_shortcode( $atts, $content = null ) {
-    return '<div class="span7">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span7', 'span7_shortcode' );
-
-// [span8]
-function span8_shortcode( $atts, $content = null ) {
-    return '<div class="span8">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span8', 'span8_shortcode' );
-
-// [span9]
-function span9_shortcode( $atts, $content = null ) {
-    return '<div class="span9">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span9', 'span9_shortcode' );
-
-// [span10]
-function span10_shortcode( $atts, $content = null ) {
-    return '<div class="span10">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span10', 'span10_shortcode' );
-
-// [span11]
-function span11_shortcode( $atts, $content = null ) {
-    return '<div class="span11">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span11', 'span11_shortcode' );
-
-// [span12]
-function span12_shortcode( $atts, $content = null ) {
-    return '<div class="span12">' . do_shortcode( $content ) . '</div>';
-}
-add_shortcode( 'span12', 'span12_shortcode' );
+ElevenEightyShortcodes::init();
